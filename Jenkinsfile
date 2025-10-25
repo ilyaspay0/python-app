@@ -10,30 +10,35 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                 echo "Skipping pip install temporarily"
-                 // sh 'pip install -r requirements.txt'
+                sh '''
+                echo "Creating virtual environment..."
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
                 sh '''
-                    echo "=== Running tests ==="
-                    . venv/bin/activate
-                    pytest || echo "Tests failed but continuing for demo"
+                echo "Running tests inside venv..."
+                . venv/bin/activate
+                pytest || echo "Tests failed or not found"
                 '''
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                echo "=== SonarQube Analysis (placeholder) ==="
+                echo 'Skipping SonarQube for now...'
             }
         }
 
         stage('Quality Gate') {
             steps {
-                echo "=== Quality Gate Check (placeholder) ==="
+                echo 'Skipping Quality Gate for now...'
             }
         }
     }
