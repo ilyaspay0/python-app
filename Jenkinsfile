@@ -26,19 +26,18 @@ pipeline {
         }
 
         stage('Run Tests and Coverage') {
-            steps {
-                sh '''
-                    echo "Running tests with coverage..."
-                    . venv/bin/activate
-                    pytest --cov=. --cov-report xml --cov-report term
-                '''
-            }
-            post {
-                always {
-                    junit '**/pytest-report.xml'
-                }
-            }
-        }
+    steps {
+        sh '''
+            . venv/bin/activate
+            echo "Running tests with coverage..."
+            pytest --cov=. --cov-report xml --cov-report term --junitxml=report.xml
+        '''
+        // Archive JUnit test report
+        junit 'report.xml'
+        // Optional: publish coverage in Sonar later
+    }
+}
+
 
         stage('SonarQube Analysis') {
             steps {
