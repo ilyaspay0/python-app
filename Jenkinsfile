@@ -51,13 +51,30 @@ pipeline {
                           -Dsonar.projectKey=python-app \
                           -Dsonar.sources=. \
                           -Dsonar.python.coverage.reportPaths=coverage.xml \
-                          -Dsonar.host.url=http://localhost:9000
+                          -Dsonar.host.url=http://sonarqube:9000
                     """
                 }
             } catch (Exception e) {
                 echo "⚠️ SonarQube analysis failed: ${e.message}"
                 echo "Continuing pipeline without SonarQube..."
-                currentBuild.result = 'UNSTABLE'
+            }
+        }
+    }
+}
+
+stage('Quality Gate') {
+    steps {
+        script {
+            try {
+                timeout(time: 2, unit: 'MINUTES') {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                }
+            } catch (Exception e) {
+                echo "⚠️ Quality Gate check failed: ${e.message}"
+                echo "Continuing pipeline..."
             }
         }
     }
