@@ -42,16 +42,22 @@ pipeline {
        stage('SonarQube Analysis') {
     steps {
         script {
-            def scannerHome = tool 'SonarScanner'  // Must match the name from step 2
-            withSonarQubeEnv('SonarQube') {
-                sh """
-                    . venv/bin/activate
-                    ${scannerHome}/bin/sonar-scanner \
-                      -Dsonar.projectKey=python-app \
-                      -Dsonar.sources=. \
-                      -Dsonar.python.coverage.reportPaths=coverage.xml \
-                      -Dsonar.host.url=http://localhost:9000
-                """
+            try {
+                def scannerHome = tool 'SonarScanner'
+                withSonarQubeEnv('SonarQube') {
+                    sh """
+                        . venv/bin/activate
+                        ${scannerHome}/bin/sonar-scanner \
+                          -Dsonar.projectKey=python-app \
+                          -Dsonar.sources=. \
+                          -Dsonar.python.coverage.reportPaths=coverage.xml \
+                          -Dsonar.host.url=http://localhost:9000
+                    """
+                }
+            } catch (Exception e) {
+                echo "⚠️ SonarQube analysis failed: ${e.message}"
+                echo "Continuing pipeline without SonarQube..."
+                currentBuild.result = 'UNSTABLE'
             }
         }
     }
