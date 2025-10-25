@@ -41,15 +41,18 @@ pipeline {
 
        stage('SonarQube Analysis') {
     steps {
-        withSonarQubeEnv('SonarQube') {
-            sh """
-                . venv/bin/activate
-                sonar-scanner \
-                  -Dsonar.projectKey=python-app \
-                  -Dsonar.sources=. \
-                  -Dsonar.python.coverage.reportPaths=coverage.xml \
-                  -Dsonar.host.url=http://localhost:9000
-            """
+        script {
+            def scannerHome = tool 'SonarScanner'  // Must match the name from step 2
+            withSonarQubeEnv('SonarQube') {
+                sh """
+                    . venv/bin/activate
+                    ${scannerHome}/bin/sonar-scanner \
+                      -Dsonar.projectKey=python-app \
+                      -Dsonar.sources=. \
+                      -Dsonar.python.coverage.reportPaths=coverage.xml \
+                      -Dsonar.host.url=http://localhost:9000
+                """
+            }
         }
     }
 }
