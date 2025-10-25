@@ -10,13 +10,8 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                sh '''
-                    echo "=== Creating virtual environment ==="
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    python3 -m pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
+                 echo "Skipping pip install temporarily"
+                 // sh 'pip install -r requirements.txt'
             }
         }
 
