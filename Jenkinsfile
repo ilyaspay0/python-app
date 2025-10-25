@@ -48,7 +48,7 @@ pipeline {
                   -Dsonar.projectKey=python-app \
                   -Dsonar.sources=. \
                   -Dsonar.python.coverage.reportPaths=coverage.xml \
-                  -Dsonar.host.url=http://sonarqube:9000
+                  -Dsonar.host.url=http://localhost:9000
             """
         }
     }
