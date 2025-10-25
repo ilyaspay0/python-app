@@ -39,21 +39,21 @@ pipeline {
 }
 
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        echo "Running SonarQube analysis..."
-                        . venv/bin/activate
-                        ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
-                            -Dsonar.projectKey=python-app \
-                            -Dsonar.sources=. \
-                            -Dsonar.python.coverage.reportPaths=coverage.xml \
-                            -Dsonar.host.url=http://sonarqube:9000
-                    '''
-                }
-            }
+       stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh """
+                . venv/bin/activate
+                sonar-scanner \
+                  -Dsonar.projectKey=python-app \
+                  -Dsonar.sources=. \
+                  -Dsonar.python.coverage.reportPaths=coverage.xml \
+                  -Dsonar.host.url=http://sonarqube:9000
+            """
         }
+    }
+}
+
 
         stage('Quality Gate') {
             steps {
